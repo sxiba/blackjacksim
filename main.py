@@ -39,22 +39,25 @@ class Deal():
         pass
 def start_game():
     quit = False
-    while not quit: 
-        print("Welcome to blackjack.")
-        print("--------------------")
-        print("Will you play?\n\n")
-        print("Hit (H) --- Quit (Q)")
-        user_input = input("Hit (H) --- Quit (Q)")
-        if user_input.lower() == "h": 
-            print("Your pool: $" + str(hand))
-            Deal.hit()
-            print("")
-        elif user_input.lower() == "q":
-            print("Thanks for playing!")
-            quit = True
-            exit()
-        else:
-            print("Input not recognized. Try again.")
+    if quit == True: 
+        print("here")
+        exit()
+    else: 
+        while not quit: 
+            print("Welcome to blackjack.")
+            print("--------------------")
+            print("Will you play?\n\n")
+            print("Hit (H) --- Quit (Q)")
+            user_input = input("Hit (H) --- Quit (Q)")
+            if user_input.lower() == "h": 
+                print("Your pool: $" + str(hand))
+                Deal.hit()
+                print("")
+            elif user_input.lower() == "q":
+                print("Thanks for playing!")
+                quit = True
+            else:
+                print("Input not recognized. Try again.")
         
     pass 
    
