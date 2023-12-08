@@ -29,7 +29,33 @@ class Deck():
         }
     
     def __init__(self) -> None:
-        pass
+        deck = cards.initDeck()
+
+    def initDeck():
+        deck = [dict() for x in range(52)] 
+        i = 0
+        for suite in suites: 
+            for j in range(1,14):
+                deck[i] = cards.createCard(
+                    suite,
+                    j,
+                    j > 10,
+                    i
+                )
+                i += 1
+
+        return deck            
+
+    def createCard(suite, value, royalty, index):
+        return {
+            "Suite": suite, 
+            "Value": value, 
+            "Royalty": royalty, 
+            "Deck position": index
+            }
+
+
+
     
     def create_deck():
         _deck = []
