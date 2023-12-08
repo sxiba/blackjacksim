@@ -8,10 +8,10 @@ blackjack = 21
 
 # create card object
 class Cards():
-    def __init__(self) -> None:
-        self.suit = None
-        self.card = None 
-        self.value = None
+    def __init__(self, suit, card, value) -> None:
+        self.suit = suit
+        self.card = card 
+        self.value = value
         __suits__ = ["Hearts", "Spades", "Clubs", "Diamonds"]
         __cards__ = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'K', 'Q']
         __card_values__ = {
@@ -53,7 +53,7 @@ def start_game():
         print("Welcome to blackjack.")
         print("--------------------")
         print("Will you play?\n\n")
-        print("Hit (H) --- Quit (Q)")
+        
         user_input = input("Hit (H) --- Quit (Q)\n")
         if user_input.lower() == "h": 
             print("\nYour money: $" + str(hand))
