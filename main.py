@@ -13,7 +13,7 @@ class Deck():
     cards = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 
                 'J', 'K', 'Q']
     card_values = {
-        "A" : 1, 
+        "A" : 11, 
         "2" : 2,  
         "3" : 3,  
         "4" : 4,  
@@ -29,37 +29,10 @@ class Deck():
         }
     
     def __init__(self) -> None:
-        deck = cards.initDeck()
-
-    def initDeck():
-        deck = [dict() for x in range(52)] 
-        i = 0
-        for suite in suites: 
-            for j in range(1,14):
-                deck[i] = cards.createCard(
-                    suite,
-                    j,
-                    j > 10,
-                    i
-                )
-                i += 1
-
-        return deck            
-
-    def createCard(suite, value, royalty, index):
-        return {
-            "Suite": suite, 
-            "Value": value, 
-            "Royalty": royalty, 
-            "Deck position": index
-            }
-
-
-
+        pass        
     
     def create_deck():
         _deck = []
-        i = 0
         for suit in Deck.suits: 
             for card in Deck.cards:
                 _deck.append(Cards(suit, card, Deck.card_values[card]))
@@ -101,29 +74,54 @@ def deal_hands(game_deck):
     
     player_hand = [draw_card(game_deck), draw_card(game_deck)]
     print("")
+    print("Player's initial hand:")
     print_cards(player_hand)
 
     dealer_hand = [draw_card(game_deck), draw_card(game_deck)]
+    print("Dealer's initial hand:")
     print_cards(dealer_hand)
-    print("what player sees: " + dealer_hand[0].card + " " + dealer_hand[0].suit)
+    print("what player sees: " + dealer_hand[0].card + " " + dealer_hand[0].suit+"\n")
 
     return player_hand, dealer_hand
 
 # either we are checking value more than we print or vise 
 def check_hand_value(hand):
-    return (sum(int(card.value) for card in hand))
+    #return (sum(int(card.value) for card in hand))
+    aceCount = 0
+    totalValue = 0
+    for card in hand:
+        value = card.value
+        aceCount += (value == 11)
+        totalValue += value
+
+    if(totalValue > 21 and aceCount > 0):
+        reductionsNeeded = int((totalValue-21)/10)+1
+        totalValue -= reductionsNeeded*10 if reductionsNeeded <= aceCount else aceCount*10
+    return totalValue
+
 
 # Start game loop. 
 def start_game():
     # game state starts as false, while user hasn't quit, continue game. 
     quit = False
     print("Welcome to blackjack.")
-    print("--------------------\n\n")
+    print("--------------------")
     print("\nYour money: $" + str(hand))
     game_deck = Deck.create_deck()
     player_hand, dealer_hand = deal_hands(game_deck)
-    while not quit: 
 
+    #check for blackjack
+    if(check_hand_value(player_hand) == 21):
+        if(check_hand_value(dealer_hand) == 21):
+            print("Both parties have Blackjack! Your bet is returned") 
+        else:
+            print("Blackjack! You win")
+        quit = True
+    elif(check_hand_value(dealer_hand) == 21):
+        print("Dealer has Blackjack. You lose")
+        quit = True
+
+    while not quit: 
         # hit, stand, double, split, quit program 
         user_input = input("Hit (H) --- Stand (S) --- Quit (Q)\n")
         match user_input.lower():
@@ -139,10 +137,20 @@ def start_game():
                 print("\n\nDealer's turn:\n")
                 while check_hand_value(dealer_hand) < 16:
                     dealer_hand.append(draw_card(game_deck))
+                    print("Dealer's hand after hitting:")
+                    print_cards(dealer_hand)
                     if check_hand_value(dealer_hand) > 21:
                         print("Dealer has: " + str(check_hand_value(player_hand)) + ". You win!")
+                print("End of Dealer's turn\n")
+
+
+                #print final hands for verification
+                print("Player's final hand:")
+                print_cards(player_hand)
+                print("Dealer's final hand:")
                 print_cards(dealer_hand)
 
+                #check the game outcome
                 if check_hand_value(player_hand) < check_hand_value(dealer_hand):
                     print("Dealer wins.")
 
@@ -151,13 +159,11 @@ def start_game():
                 else: 
                     print("Push. Your bet is returned.")
                 quit = True 
-                # dealer does their thing, compares, then exits the dealt session
-                # in stand, we check for 21 after dealer thinks they have a decent draw 
             case 'q':
                 print("Thanks for playing!")
                 quit = True
-            case '_':
-                print("\nInput not recognized. Try again.\n\n")
+            case _:
+                print("Input not recognized. Try again.\n")
  
     exit()
    
