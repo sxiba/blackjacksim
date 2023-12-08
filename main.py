@@ -117,9 +117,6 @@ def start_game():
         else:
             print("Blackjack! You win")
         quit = True
-    elif(check_hand_value(dealer_hand) == 21):
-        print("Dealer has Blackjack. You lose")
-        quit = True
 
     while not quit: 
         # hit, stand, double, split, quit program 
@@ -142,7 +139,7 @@ def start_game():
 
                 #confirm dealer did not bust
                 if check_hand_value(dealer_hand) > 21:
-                    print("Dealer has: " + str(check_hand_value(dealer_hand)) + ". You win!")
+                    print("Dealer has: " + str(check_hand_value(dealer_hand)) + ". You win!\n")
                     quit = True
                     break
                 print("End of Dealer's turn\n")
@@ -155,22 +152,31 @@ def start_game():
                 print_cards(dealer_hand)
 
                 #check the game outcome
-                if check_hand_value(player_hand) < check_hand_value(dealer_hand):
-                    print("Dealer wins.")
+                if(check_hand_value(dealer_hand) == 21):
+                    print("Dealer has Blackjack! Dealer wins.\n")
+                elif check_hand_value(player_hand) < check_hand_value(dealer_hand):
+                    print("Dealer wins.\n")
 
                 elif check_hand_value(player_hand) > check_hand_value(dealer_hand):
-                    print("You win!")
+                    print("You win!\n")
                 else: 
-                    print("Push. Your bet is returned.")
+                    print("Push. Your bet is returned.\n")
                 quit = True 
             case 'q':
-                print("Thanks for playing!")
-                quit = True
+                print("Thanks for playing!\n")
+                exit()
             case _:
                 print("Input not recognized. Try again.\n")
- 
-    exit()
    
 if __name__ == "__main__": 
     start_game()
+
+    while True:
+        user_input = input("Play Again? --- Yes (Y) --- No (Q)\n\n")
+        match user_input.lower():
+            case "y": start_game()
+            case "q": exit()
+            case "n": exit()
+            case _: print("Input not recognized. Try again.\n")
+    exit()
     
