@@ -152,7 +152,7 @@ def start_game():
                 print_cards(dealer_hand)
 
                 #check the game outcome
-                if(check_hand_value(dealer_hand) == 21):
+                if(check_hand_value(dealer_hand) == 21 and len(dealer_hand) == 2):
                     print("Dealer has Blackjack! Dealer wins.\n")
                 elif check_hand_value(player_hand) < check_hand_value(dealer_hand):
                     print("Dealer wins.\n")
@@ -172,11 +172,9 @@ if __name__ == "__main__":
     start_game()
 
     while True:
-        user_input = input("Play Again? --- Yes (Y) --- No (Q)\n\n")
+        user_input = input("Play Again? --- Yes (Y) --- No (N)\n\n")
         match user_input.lower():
             case "y": start_game()
             case "q": exit()
             case "n": exit()
-            case _: print("Input not recognized. Try again.\n")
-    exit()
-    
+            case _: print("Input not recognized. Try again.\n")    
