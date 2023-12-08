@@ -139,8 +139,12 @@ def start_game():
                     dealer_hand.append(draw_card(game_deck))
                     print("Dealer's hand after hitting:")
                     print_cards(dealer_hand)
-                    if check_hand_value(dealer_hand) > 21:
-                        print("Dealer has: " + str(check_hand_value(player_hand)) + ". You win!")
+
+                #confirm dealer did not bust
+                if check_hand_value(dealer_hand) > 21:
+                    print("Dealer has: " + str(check_hand_value(dealer_hand)) + ". You win!")
+                    quit = True
+                    break
                 print("End of Dealer's turn\n")
 
 
