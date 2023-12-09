@@ -34,21 +34,12 @@ class Deck():
         pass
     
     def create_deck():
+        """Creates n number of decks where n is a random integer (1-8)."""
         _deck = []
         for suit in Deck.suits: 
             for card in Deck.cards:
                 _deck.append(Cards(suit, card, Deck.card_values[card]))
-        return _deck 
-    # intializing deck with standard rules or with house advantage 
-
-    #     if random.randint(0,1) == 0: 
-    #           deck.append(Cards('of Spades', 'A', '1'))
-    
-def draw_card(deck):
-    """Draw random card and remove from deck."""
-    drawn = random.choice(deck)
-    deck.remove(drawn)
-    return drawn
+        return _deck*random.randint(1,8)
 
 # Create card object 
 class Cards(): 
@@ -57,6 +48,12 @@ class Cards():
         self.card = card 
         self.value = value
         pass
+
+def draw_card(deck):
+    """Draw random card and remove from deck."""
+    drawn = random.choice(deck)
+    deck.remove(drawn)
+    return drawn
 
 # card.card moment
 def print_cards(hand):
