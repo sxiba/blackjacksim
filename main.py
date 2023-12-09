@@ -129,9 +129,10 @@ def player_action():
     # game state starts as false, while user hasn't quit, continue game. 
     game_deck = Deck.create_deck()
     player_hand, dealer_hand = deal_hands(game_deck)
-
+    split = False
+    
     #check for blackjack
-    if(check_hand_value(player_hand) == 21):
+    if check_hand_value(player_hand) == 21:
         if(check_hand_value(dealer_hand) == 21):
             print("Both parties have Blackjack! Your bet is returned")
             return "Draw" 
@@ -139,14 +140,21 @@ def player_action():
             print("Blackjack! You win.\n")
             return "Natural"
         quit = True
-    elif(check_hand_value(dealer_hand) == 21):
+    elif check_hand_value(dealer_hand) == 21:
         print("Dealer has Blackjack! Dealer wins.\n")
         return "Loss"
-
-
+    
+    # check if the cards are the same before offering split. 
+    if player_hand[0].card == player_hand[1].card:
+        split = True
+        
     while True: 
         # hit, stand, double, split, quit program 
-        user_input = input("Hit (H) --- Stand (S) --- Quit (Q)\n")
+        if split: 
+            user_input = input("Hit (H) --- Stand (S) --- Split (X) --- Quit (Q)\n")
+                
+        else: 
+            user_input = input("Hit (H) --- Stand (S) --- Quit (Q)\n")
         match user_input.lower():
             case 'h': 
                 player_hand.append(draw_card(game_deck))
@@ -187,6 +195,8 @@ def player_action():
                 else: 
                     print("Push. Your bet is returned.\n")
                     return "Draw"
+            # split case, play one hand out entirely before moving to next 
+            case 'x': print("peepeepoopoo"); exit()
             case 'q':
                 print("Thanks for playing!\n")
                 exit()
