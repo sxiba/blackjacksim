@@ -2,7 +2,9 @@ import random
 import sys
 import time 
 
-hand = 250 
+INITIAL_PLAYER_BALANCE = 250 
+MIN_BET = 2
+MAX_BET = 500
 blackjack = 21 
 
 # create card object, n amount of decks played at once 
@@ -99,29 +101,39 @@ def check_hand_value(hand):
         totalValue -= reductionsNeeded*10 if reductionsNeeded <= aceCount else aceCount*10
     return totalValue
 
+def quereyBet():
+    while True:
+        bet_input = input("Enter a bet for this hand:\n")
+        try:
+            player_bet = int(bet_input)
+            if(player_bet >= MIN_BET and player_bet <= MAX_BET):
+                return player_bet
+            else:
+                print("Acceptable bet amounts are between $"+str(MIN_BET)+" and $"+str(MAX_BET)+"\n")
+        except ValueError:
+            print("Please enter an integer value.\n")
 
 # Start game loop. 
 def start_game():
     # game state starts as false, while user hasn't quit, continue game. 
-    quit = False
-    print("Welcome to blackjack.")
-    print("--------------------")
-    print("\nYour money: $" + str(hand))
     game_deck = Deck.create_deck()
     player_hand, dealer_hand = deal_hands(game_deck)
 
     #check for blackjack
     if(check_hand_value(player_hand) == 21):
         if(check_hand_value(dealer_hand) == 21):
-            print("Both parties have Blackjack! Your bet is returned") 
+            print("Both parties have Blackjack! Your bet is returned")
+            return "Draw" 
         else:
             print("Blackjack! You win")
+            return "Natural"
         quit = True
     elif(check_hand_value(dealer_hand) == 21):
         print("Dealer has Blackjack! Dealer wins.\n")
-        quit = True
+        return "Loss"
 
-    while not quit: 
+
+    while True: 
         # hit, stand, double, split, quit program 
         user_input = input("Hit (H) --- Stand (S) --- Quit (Q)\n")
         match user_input.lower():
@@ -131,7 +143,7 @@ def start_game():
                 
                 if check_hand_value(player_hand) > 21:
                     print("You have: " + str(check_hand_value(player_hand)) + ". Sorry!")
-                    quit = True
+                    return "Loss"
                 # random sets dealer card
             case 's':
                 print("\n\nDealer's turn:\n")
@@ -143,8 +155,7 @@ def start_game():
                 #confirm dealer did not bust
                 if check_hand_value(dealer_hand) > 21:
                     print("Dealer has: " + str(check_hand_value(dealer_hand)) + ". You win!\n")
-                    quit = True
-                    break
+                    return "Win"
                 print("End of Dealer's turn\n")
 
 
@@ -157,25 +168,49 @@ def start_game():
                 #check the game outcome
                 if check_hand_value(player_hand) < check_hand_value(dealer_hand):
                     print("Dealer wins.\n")
-
+                    return "Loss"
                 elif check_hand_value(player_hand) > check_hand_value(dealer_hand):
                     print("You win!\n")
+                    return "Win"
                 else: 
                     print("Push. Your bet is returned.\n")
-                quit = True 
+                    return "Draw"
             case 'q':
                 print("Thanks for playing!\n")
                 exit()
             case _:
                 print("Input not recognized. Try again.\n")
-   
-if __name__ == "__main__": 
-    start_game()
+
+def manageGame():
+    balance_player = INITIAL_PLAYER_BALANCE
+    print("Welcome to blackjack.")
+    print("--------------------")
+    print("\nYour money: $" + str(balance_player))
+    bet_amount = quereyBet() 
+    result = start_game()
+    match result:
+        case "Win": balance_player += bet_amount
+        case "Natural": balance_player += 1.5*bet_amount
+        case "Loss": balance_player -= bet_amount
+        case _: balance_player += 0
 
     while True:
         user_input = input("Play Again? --- Yes (Y) --- No (N)\n\n")
         match user_input.lower():
-            case "y": start_game()
+            case "y":
+                print("Welcome to blackjack.")
+                print("--------------------")
+                print("\nYour money: $" + str(balance_player))
+                bet_amount = quereyBet() 
+                result = start_game()
+                match result:
+                    case "Win": balance_player += bet_amount
+                    case "Natural": balance_player += 1.5*bet_amount
+                    case "Loss": balance_player -= bet_amount
+                    case _: balance_player += 0
             case "q": exit()
             case "n": exit()
-            case _: print("Input not recognized. Try again.\n")    
+            case _: print("Input not recognized. Try again.\n")   
+
+if __name__ == "__main__": 
+    manageGame()
