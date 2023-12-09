@@ -3,7 +3,6 @@ import sys
 import time 
 
 hand = 250 
-
 blackjack = 21 
 
 # create card object, n amount of decks played at once 
@@ -94,6 +93,7 @@ def check_hand_value(hand):
         aceCount += (value == 11)
         totalValue += value
 
+    #Aces are valued 1 if they would cause a bust if valued at 11
     if(totalValue > 21 and aceCount > 0):
         reductionsNeeded = int((totalValue-21)/10)+1
         totalValue -= reductionsNeeded*10 if reductionsNeeded <= aceCount else aceCount*10
@@ -117,6 +117,9 @@ def start_game():
         else:
             print("Blackjack! You win")
         quit = True
+    elif(check_hand_value(dealer_hand) == 21):
+        print("Dealer has Blackjack! Dealer wins.\n")
+        quit = True
 
     while not quit: 
         # hit, stand, double, split, quit program 
@@ -132,7 +135,7 @@ def start_game():
                 # random sets dealer card
             case 's':
                 print("\n\nDealer's turn:\n")
-                while check_hand_value(dealer_hand) < 16:
+                while check_hand_value(dealer_hand) <= 16:
                     dealer_hand.append(draw_card(game_deck))
                     print("Dealer's hand after hitting:")
                     print_cards(dealer_hand)
@@ -152,9 +155,7 @@ def start_game():
                 print_cards(dealer_hand)
 
                 #check the game outcome
-                if(check_hand_value(dealer_hand) == 21 and len(dealer_hand) == 2):
-                    print("Dealer has Blackjack! Dealer wins.\n")
-                elif check_hand_value(player_hand) < check_hand_value(dealer_hand):
+                if check_hand_value(player_hand) < check_hand_value(dealer_hand):
                     print("Dealer wins.\n")
 
                 elif check_hand_value(player_hand) > check_hand_value(dealer_hand):
