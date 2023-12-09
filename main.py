@@ -73,6 +73,7 @@ def deal_hands(game_deck):
     # 52 cards from game deck 
     # new list of pulled cards, removing from game deck 
     
+    #add debug prints
     player_hand = [draw_card(game_deck), draw_card(game_deck)]
     print("")
     print_cards(player_hand)
