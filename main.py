@@ -122,7 +122,7 @@ def settle_bet(player_balance):
         except ValueError:
             print("Please enter an integer value.\n")
 
-def player_action():
+def player_action(bet_amount, player_balance):
     """
     Manages player action here (bet, stand, split, double, quit)
     returns string 
@@ -130,7 +130,7 @@ def player_action():
     # game state starts as false, while user hasn't quit, continue game. 
     game_deck = Deck.create_deck()
     player_hand, dealer_hand = deal_hands(game_deck)
-    split = False
+    split_condition = False
     
     #check for blackjack
     if check_hand_value(player_hand) == 21:
@@ -147,57 +147,82 @@ def player_action():
     
     # check if the cards are the same before offering split. 
     if player_hand[0].card == player_hand[1].card:
-        split = True
+        split_condition = True
+    
+    def hit(hand): 
+        hand.append(draw_card(game_deck))
+        print_cards(hand)
+        
+        if check_hand_value(hand) > 21:
+            print("You have: " + str(check_hand_value(hand)) 
+                + ". Sorry!")
+            return "Loss", bet_amount
+    def stand(hand): 
+        print("\n\nDealer's turn:\n")
+        while check_hand_value(dealer_hand) <= 16:
+            dealer_hand.append(draw_card(game_deck))
+            print("Dealer's hand after hitting:")
+            print_cards(dealer_hand)
+
+        #confirm dealer did not bust
+        if check_hand_value(dealer_hand) > 21:
+            print("Dealer has: " + str(check_hand_value(dealer_hand)) 
+                + ". You win!\n")
+            return "Win", bet_amount
+        print("End of Dealer's turn\n")
+
+        #print final hands for verification
+        print("Player's final hand:")
+        print_cards(player_hand)
+        print("Dealer's final hand:")
+        print_cards(dealer_hand)
+
+        #check the game outcome
+        if check_hand_value(player_hand) < check_hand_value(dealer_hand):
+            print("Dealer wins.\n")
+            return "Loss", bet_amount
+        elif check_hand_value(player_hand) > check_hand_value(dealer_hand):
+            print("You win!\n")
+            return "Win", bet_amount
+        else: 
+            print("Push. Your bet is returned.\n")
+            return "Draw", bet_amount
+        
         
     while True: 
         # hit, stand, double, split, quit program 
-        if split: 
-            user_input = input("Hit (H) --- Stand (S) --- Split (X) --- Quit (Q)\n")
+        if split_condition: 
+            user_input = input("Hit (H) --- Stand (S) --- Double (D) --- Split (X) --- Quit (Q)\n")
                 
         else: 
             user_input = input("Hit (H) --- Stand (S) --- Quit (Q)\n")
         match user_input.lower():
             case 'h': 
-                player_hand.append(draw_card(game_deck))
-                print_cards(player_hand)
-                
-                if check_hand_value(player_hand) > 21:
-                    print("You have: " + str(check_hand_value(player_hand)) 
-                        + ". Sorry!")
-                    return "Loss"
+                hit()
                 # random sets dealer card
             case 's':
-                print("\n\nDealer's turn:\n")
-                while check_hand_value(dealer_hand) <= 16:
-                    dealer_hand.append(draw_card(game_deck))
-                    print("Dealer's hand after hitting:")
-                    print_cards(dealer_hand)
-
-                #confirm dealer did not bust
-                if check_hand_value(dealer_hand) > 21:
-                    print("Dealer has: " + str(check_hand_value(dealer_hand)) 
-                        + ". You win!\n")
-                    return "Win"
-                print("End of Dealer's turn\n")
-
-                #print final hands for verification
-                print("Player's final hand:")
-                print_cards(player_hand)
-                print("Dealer's final hand:")
-                print_cards(dealer_hand)
-
-                #check the game outcome
-                if check_hand_value(player_hand) < check_hand_value(dealer_hand):
-                    print("Dealer wins.\n")
-                    return "Loss"
-                elif check_hand_value(player_hand) > check_hand_value(dealer_hand):
-                    print("You win!\n")
-                    return "Win"
+                stand()
+            # double case, hit then stand, but double the bet in your hand
+            case 'd': 
+                print("\nYou doubled your hand.\n")
+                if bet_amount*2 > player_balance:
+                    print("Ineligible action. Try again.\n")
                 else: 
-                    print("Push. Your bet is returned.\n")
-                    return "Draw"
+                    bet_amount = bet_amount*2 
+                    player_hand.append(draw_card(game_deck))
+                    print_cards(player_hand)
+                    
+                    hit()
+                    stand()
             # split case, play one hand out entirely before moving to next 
-            case 'x': print("peepeepoopoo"); exit()
+            # maybe pass in hands and have each thing go through hit/stand? and manage cards outside of this function? 
+            case 'x': 
+                # hand 1, hand 2 
+                first_hand = player_hand[0]
+                second_hand = player_hand[1]
+                hit(first_hand)
+                
+                hit(second_hand)
             case 'q':
                 print("Thanks for playing!\n")
                 exit()
@@ -205,7 +230,7 @@ def player_action():
                 print("Input not recognized. Try again.\n")
 
 def game_start(player_balance):
-    """ Starts and continues game loop."""
+    """ Starts and maintains game loop."""
     user_input = 'y'
     while True:
         match user_input.lower():
@@ -213,7 +238,7 @@ def game_start(player_balance):
                 print("Let's play blackjack.\n"+'-'*80)
                 print("Your money: $" + str(player_balance))
                 bet_amount = settle_bet(player_balance) 
-                result = player_action()
+                result, bet_amount = player_action(bet_amount, player_balance)
                 match result:
                     case "Win": player_balance += bet_amount
                     case "Natural": player_balance += 1.5*bet_amount
