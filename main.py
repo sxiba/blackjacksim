@@ -1,4 +1,4 @@
-#! usr/bin/python3
+#!/usr/bin/python3
 from blackjack import * 
 
 MIN_BET = 2
@@ -58,6 +58,7 @@ if __name__ == "__main__":
             game = False
         # player.hand[0] = Cards("of Hearts", 'A', 11)
         # player.hand[1] = Cards("of Hearts", 'A', 11)
+        
         # check for pairs/split
         if player.hand[0].value == player.hand[1].value:
      
@@ -67,8 +68,8 @@ if __name__ == "__main__":
                 print("You split.")
                 hands = [player.hand[0]], [player.hand[1]]
                 print(hands)
-            else:
-                hands = [player.hand]
+        else:
+            hands = [player.hand]
         for i in range(0, num_hands):
             print(f"Your {i+1} thstrd hand: ")
             player.hand = hands[i]
@@ -76,10 +77,7 @@ if __name__ == "__main__":
             player_decision()
         
         # dealer hand
-        if dealer.hand_value >= 17: 
-            # stand
-            pass
-        else:
-            pass
-        
-        # TODO: payout 
+        while dealer.hand_value < 17: 
+            dealer.append_card_to_hand(game_deck.draw_card())
+    # TODO: game resolution 
+    # TODO: payout 

@@ -1,4 +1,4 @@
-#! usr/bin/python3
+#!/usr/bin/python3
 import random
 
 # Create card object 
@@ -55,11 +55,6 @@ class Deck():
         # returns a list of cards (two)
         hand = [self.draw_card() for i in range(0,2)]
         return hand
-        
-        
-# class Hand():
-#     def __init__(self) -> None:
-#         pass
     
 class Player():
     def __init__(self, bal) -> None:
@@ -90,7 +85,7 @@ class Player():
             ace_count += (value == 11)
             total_value += value
 
-        #Aces are valued 1 if they would cause a bust if valued at 11
+        # Aces are valued 1 if they would cause a bust if valued at 11
         if total_value > 21 and ace_count > 0:
             reductions_needed = int((total_value - 21)/10) + 1 # refer to pep 8?
             total_value -= reductions_needed*10 if reductions_needed <= ace_count else ace_count*10
