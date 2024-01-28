@@ -13,54 +13,65 @@ if __name__ == "__main__":
     
     player_balance = int(input("How much would you like to deposit (number)? \n"))
     player = Player(player_balance)
-    dealer = Player(float('inf')) #or None)
+    dealer = Player(float('inf'))
     
     split = False
     num_hands = 1
     game = True
     
     def player_decision():
+        
         while 1:
-            # grey out the check for double prior to player decision if they do not have enough
+        
             user_input = input("Hit (H) --- Stand (S) --- Double (D) --- Quit (Q)\n")            
             match user_input.lower():
-                case 'h': 
+                
+                case 'h': # hit
                     player.append_card_to_hand(game_deck.draw_card())
                     print(player.hand_value)
                     print(player.print_hand())
                     if player.hand_value > 21: 
                         return
-                case 'd': 
-                    player.append_card_to_hand(game_deck.draw_card())
-                    player.bet_amount*=2 
-                    if player.bet_amount > player_balance:
+                
+                case 'd': # double 
+                    if player.bet_amount > player.balance:
                         print("You do not have enough to double. Try again.\n")
                         continue
+                    player.append_card_to_hand(game_deck.draw_card())
+                    player.bet_amount*=2 
                     return
-                case 's':
+                
+                case 's': # stand 
                     print("You choose to stand.\n")
                     return    
-                case 'q':
+               
+                case 'q': # quit program 
                     print("Thanks for playing!\n")
                     exit()
+               
                 case _:
                     print("Input not recognized. Try again.\n")
                     
+    # check each hand against dealer 
     def game_resolution(): 
+        
         print("Your hand: " + str(player.print_hand()))        
         print("Dealer's hand:" + str(dealer.print_hand()) + "\n")
+        
         if player.hand_value > 21: 
             print("Your hand was over 21, you lose.\n")
-            # print(player.bet_amount)
             player.update_balance(-1)
             return
+        
         elif player.hand_value <= 21: 
+           
             if dealer.hand_value > 21: 
                 print("The dealer busts. You win!\n")
                 player.update_balance(1)
                 return 
                 
             elif dealer.hand_value <= 21: 
+              
                 if player.hand_value == dealer.hand_value: 
                     print("You tied with the dealer. Your funds will be returned to your balance shortly.\n")
                     player.update_balance(0)
@@ -78,10 +89,12 @@ if __name__ == "__main__":
                     player.update_balance(-1)
                     return
                 
+                # dealer wins over player
                 elif dealer.hand_value > player.hand_value:
                     print("You lose.")
                     player.update_balance(-1)
                     return
+                
                 # player has greater hand value than dealer, wins 
                 else: 
                     print("You win! You will be paid out shortly.\n")
@@ -91,12 +104,15 @@ if __name__ == "__main__":
             return
         
     while game:
+        
         game_deck = Deck()
                 
         player_bet = int(input("How much would you like to bet (number)? \n"))
+        
         if player_bet > player.balance or player_bet < MIN_BET: 
             print("Your bet is invalid. Try again.\n")
             continue
+        
         player.set_bet(player_bet)
 
         print("\nYou bet: " + str(player_bet) + "\n")
@@ -117,6 +133,7 @@ if __name__ == "__main__":
         # check for pairs/split
         if player.hand[0].value == player.hand[1].value:
             player_split = str(input("Would you like to split (Enter Y/N)? \n\n")).lower()
+            
             if player_split == "y":
                 num_hands = 2 
                 print("You split.")
@@ -140,15 +157,19 @@ if __name__ == "__main__":
             
         print("Your current balance is: " + str(player.balance))
         play_again = input("Play again? (Yes/No)\n").lower()
+        
         match play_again:
+          
             case 'yes' | 'y':
                 if player.balance <= 0: 
                     print("Insufficient funds. Deposit more funds.\n")
                     game = False
                 continue
+           
             case 'no' | 'n':
                 print("Thanks for playing!")
                 game = False
                 break
+           
             case '_':
                 print("Input not recognized. Try again.\n")
