@@ -64,12 +64,12 @@ class Player():
         self.hand_value = None
         pass
     
-    def update_balance(self,bal):
-        self.balance += bal
+    def update_balance(self,coeff):
+        self.balance += coeff*self.bet_amount
         
     def set_bet(self,bet):
         self.bet_amount = bet
- 
+        
     def set_hand(self, hand):
         self.hand = hand 
         self.update_value()
